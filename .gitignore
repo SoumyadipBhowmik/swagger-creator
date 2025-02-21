@@ -1,0 +1,7 @@
+# Ignore everything in collections and output directories
+collections/*
+output/*
+
+# But keep the directories themselves
+!collections/.gitkeep
+!output/.gitkeep

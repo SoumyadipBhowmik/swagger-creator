@@ -3,6 +3,7 @@ import yaml
 import argparse
 from urllib.parse import urlparse
 import sys
+import os
 from typing import Dict, List, Any, Optional
 
 def parse_postman_collection(postman_file: str) -> Dict:
@@ -49,8 +50,9 @@ def process_request_body(request: Dict) -> Optional[Dict]:
 
 def process_response(response: Dict) -> Dict:
     status_code = str(response.get('code', 200))
-    content_type = next((h['value'] for h in response.get('header', [])
-                       if h.get('key', '').lower() == 'content-type'), 'application/json')
+    headers = response.get('header', []) or []
+    content_type = next((h['value'] for h in headers
+                   if h.get('key', '').lower() == 'content-type'), 'application/json')
 
     try:
         example = json.loads(response.get('body', '{}')) if content_type == 'application/json' else response.get('body', '')
@@ -221,17 +223,67 @@ def convert_postman_to_openapi(postman_collection: Dict) -> Dict:
 
 def main():
     parser = argparse.ArgumentParser(description='Convert Postman Collection to OpenAPI YAML')
-    parser.add_argument('input', help='Input Postman collection JSON file')
-    parser.add_argument('output', help='Output OpenAPI YAML file')
+    parser.add_argument('--input', help='Input Postman collection filename', default=None)
+    parser.add_argument('--output', help='Output OpenAPI YAML filename', default=None)
+    parser.add_argument('--input-dir', help='Input directory for Postman collections', default='collections')
+    parser.add_argument('--output-dir', help='Output directory for OpenAPI specs', default='output')
     args = parser.parse_args()
 
-    postman_collection = parse_postman_collection(args.input)
-    openapi_spec = convert_postman_to_openapi(postman_collection)
-
-    with open(args.output, 'w') as f:
-        yaml.dump(openapi_spec, f, sort_keys=False, allow_unicode=True)
-
-    print(f"Converted to {args.output}")
+    # Create output directory if it doesn't exist
+    if not os.path.exists(args.output_dir):
+        os.makedirs(args.output_dir)
+        print(f"Created output directory: {args.output_dir}")
+    
+    # Process a single file if specified
+    if args.input:
+        input_path = os.path.join(args.input_dir, args.input)
+        
+        # Determine output filename based on input if not specified
+        if args.output:
+            output_filename = args.output
+        else:
+            base_name = os.path.splitext(os.path.basename(args.input))[0]
+            output_filename = f"{base_name}_openapi.yaml"
+        
+        output_path = os.path.join(args.output_dir, output_filename)
+        
+        # Convert the collection
+        print(f"Processing: {input_path}")
+        postman_collection = parse_postman_collection(input_path)
+        openapi_spec = convert_postman_to_openapi(postman_collection)
+        
+        with open(output_path, 'w') as f:
+            yaml.dump(openapi_spec, f, sort_keys=False, allow_unicode=True)
+        
+        print(f"Converted to {output_path}")
+    
+    # Process all files in input directory if no specific input file
+    else:
+        if not os.path.exists(args.input_dir):
+            print(f"Input directory '{args.input_dir}' does not exist. Please create it and add your Postman collections.")
+            sys.exit(1)
+            
+        files_processed = 0
+        for filename in os.listdir(args.input_dir):
+            if filename.endswith('.json'):
+                input_path = os.path.join(args.input_dir, filename)
+                base_name = os.path.splitext(filename)[0]
+                output_path = os.path.join(args.output_dir, f"{base_name}_openapi.yaml")
+                
+                print(f"Processing: {input_path}")
+                postman_collection = parse_postman_collection(input_path)
+                openapi_spec = convert_postman_to_openapi(postman_collection)
+                
+                with open(output_path, 'w') as f:
+                    yaml.dump(openapi_spec, f, sort_keys=False, allow_unicode=True)
+                
+                print(f"Converted to {output_path}")
+                files_processed += 1
+        
+        if files_processed == 0:
+            print(f"No JSON files found in '{args.input_dir}'. Please add your Postman collections to this directory.")
+        else:
+            print(f"Processed {files_processed} collection(s).")
 
 if __name__ == '__main__':
     main()
