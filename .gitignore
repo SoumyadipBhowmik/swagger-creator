@@ -5,3 +5,6 @@ output/*
 # But keep the directories themselves
 !collections/.gitkeep
 !output/.gitkeep
+
+# Ignore target directory completely
+/target

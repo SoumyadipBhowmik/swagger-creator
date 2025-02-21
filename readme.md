@@ -12,58 +12,56 @@ This tool converts Postman Collections to OpenAPI 3.0 YAML specifications. It au
 
 ## 📋 Prerequisites
 
-- Python 3.6 or higher
-- PyYAML package (`pip install pyyaml`)
+- Rust 1.70.0 or higher
+- Cargo (Rust's package manager)
 
 ## 🔧 Installation
 
-1. Clone this repository or download the script
+1. Clone this repository or download the code
 2. Install required packages:
    ```
-   pip install pyyaml
+   cargo build --release
    ```
 
 ## 📁 Directory Structure
 
 ```
 ├── collections/        # Place your Postman collections here
-├── output/             # Generated OpenAPI specs will be saved here
-├── postman_to_swagger.py  # The conversion script
+├── output/            # Generated OpenAPI specs will be saved here
+├── src/               # Source code
+│   ├── main.rs        # Entry point
+│   ├── lib.rs         # Library definitions
+│   ├── models/        # Data structures
+│   ├── converters/    # Conversion logic
+│   └── utils/         # Utility functions
 └── README.md
 ```
 
 ## 🏃‍♂️ Usage
 
 ### Basic Usage: Convert All Collections
-
-Process all JSON files in the collections folder:
-
 ```bash
-python postman_to_swagger.py
+cargo run --release
 ```
 
 ### Convert a Specific Collection
-
 ```bash
-python postman_to_swagger.py --input "Your API.postman_collection.json"
+cargo run --release -- --input "Your API.postman_collection.json"
 ```
 
 ### Use Custom Directory Names
-
 ```bash
-python postman_to_swagger.py --input-dir "my_collections" --output-dir "specs"
+cargo run --release -- --input-dir "my_collections" --output-dir "specs"
 ```
 
 ### Specify Custom Output Filename
-
 ```bash
-python postman_to_swagger.py --input "Your API.postman_collection.json" --output "custom_name.yaml"
+cargo run --release -- --input "Your API.postman_collection.json" --output "custom_name.yaml"
 ```
 
 ### Full Custom Configuration
-
 ```bash
-python postman_to_swagger.py --input "Your API.postman_collection.json" --output "custom_name.yaml" --input-dir "api_files" --output-dir "yaml_files"
+cargo run --release -- --input "Your API.postman_collection.json" --output "custom_name.yaml" --input-dir "api_files" --output-dir "yaml_files"
 ```
 
 ## 📝 Command-Line Arguments
@@ -78,21 +76,26 @@ python postman_to_swagger.py --input "Your API.postman_collection.json" --output
 ## 📤 Workflow
 
 1. Place your Postman Collection JSON file(s) in the `collections` folder
-2. Run the script with desired options
+2. Run the binary with desired options
 3. Find your OpenAPI specification(s) in the `output` folder
 
 ## 🔍 Example
 
 Input: `collections/API.postman_collection.json`  
-Command: `python postman_to_swagger.py`  
-Output: `output/API_swagger.yaml`
+Command:
+```bash
+cargo run --release
+```
+Output: `output/API_openapi.yaml`
 
 ## 🛠️ Troubleshooting
 
 - Ensure your Postman Collection is in valid JSON format
 - For large collections, check for any malformed requests or responses
 - If you encounter errors, try converting a specific collection with the `--input` flag
+- Check cargo build output for any dependency issues
+- Make sure the input and output directories exist and have proper permissions
 
 ## 📜 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the LICENSE file for details
