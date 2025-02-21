@@ -28,7 +28,7 @@ This tool converts Postman Collections to OpenAPI 3.0 YAML specifications. It au
 ```
 ├── collections/        # Place your Postman collections here
 ├── output/             # Generated OpenAPI specs will be saved here
-├── postman_to_openapi.py  # The conversion script
+├── postman_to_swagger.py  # The conversion script
 └── README.md
 ```
 
@@ -39,31 +39,31 @@ This tool converts Postman Collections to OpenAPI 3.0 YAML specifications. It au
 Process all JSON files in the collections folder:
 
 ```bash
-python postman_to_openapi.py
+python postman_to_swagger.py
 ```
 
 ### Convert a Specific Collection
 
 ```bash
-python postman_to_openapi.py --input "Your API.postman_collection.json"
+python postman_to_swagger.py --input "Your API.postman_collection.json"
 ```
 
 ### Use Custom Directory Names
 
 ```bash
-python postman_to_openapi.py --input-dir "my_collections" --output-dir "specs"
+python postman_to_swagger.py --input-dir "my_collections" --output-dir "specs"
 ```
 
 ### Specify Custom Output Filename
 
 ```bash
-python postman_to_openapi.py --input "Your API.postman_collection.json" --output "custom_name.yaml"
+python postman_to_swagger.py --input "Your API.postman_collection.json" --output "custom_name.yaml"
 ```
 
 ### Full Custom Configuration
 
 ```bash
-python postman_to_openapi.py --input "Your API.postman_collection.json" --output "custom_name.yaml" --input-dir "api_files" --output-dir "yaml_files"
+python postman_to_swagger.py --input "Your API.postman_collection.json" --output "custom_name.yaml" --input-dir "api_files" --output-dir "yaml_files"
 ```
 
 ## 📝 Command-Line Arguments
@@ -84,8 +84,8 @@ python postman_to_openapi.py --input "Your API.postman_collection.json" --output
 ## 🔍 Example
 
 Input: `collections/API.postman_collection.json`  
-Command: `python postman_to_openapi.py`  
-Output: `output/API_openapi.yaml`
+Command: `python postman_to_swagger.py`  
+Output: `output/API_swagger.yaml`
 
 ## 🛠️ Troubleshooting
 
