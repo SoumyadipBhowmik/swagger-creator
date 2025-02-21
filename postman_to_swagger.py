@@ -197,14 +197,18 @@ def convert_postman_to_openapi(postman_collection: Dict) -> Dict:
         for tag in operation_tags:
             tags_set.add(tag)
 
-        openapi['paths'][path][method] = {
+        operation = {  # Build the operation dictionary
             "summary": item.get('name', ''),
             "description": request.get('description', ''),
             "parameters": parameters,
-            "requestBody": request_body,
             "responses": responses or {"200": {"description": "OK"}},
             "tags": operation_tags
         }
+
+        if request_body:  # Only add requestBody if it's not None
+            operation["requestBody"] = request_body
+
+        openapi['paths'][path][method] = operation
 
     def process_items(items: List[Dict], current_tags: List[str]) -> None:
         for item in items:
